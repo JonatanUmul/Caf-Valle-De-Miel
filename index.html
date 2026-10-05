@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Café Valle de Miel</title>
+  <link rel="icon" type="image/png" href="assets/brand/valle-de-miel-logo.png">
+  <link rel="apple-touch-icon" href="assets/brand/valle-de-miel-logo.png">
+  <style>
+    :root {
+      --black: #000000;
+      --panel: #12100c;
+      --gold: #d4af37;
+      --gold-2: #c5a059;
+      --white: #ffffff;
+      --text: #f7f2e7;
+      --muted: #c9bc9e;
+      --line: rgba(212, 175, 55, 0.28);
+      --shadow: 0 24px 70px rgba(0, 0, 0, 0.42);
+      --radius: 8px;
+      --max: 1180px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; scroll-padding-top: 92px; }
+
+    body {
+      min-width: 320px;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 18% 0%, rgba(212, 175, 55, 0.14), transparent 32%),
+        linear-gradient(180deg, #000000 0%, #0b0906 48%, #000000 100%);
+      font-family: Georgia, "Times New Roman", serif;
+      line-height: 1.62;
+    }
+
+    img { display: block; max-width: 100%; }
+    a { color: inherit; text-decoration: none; }
+    button { font: inherit; }
+    .container { width: min(100% - 32px, var(--max)); margin-inline: auto; }
+
+    .site-header {
+      position: fixed;
+      z-index: 20;
+      inset: 0 0 auto;
+      border-bottom: 1px solid var(--line);
+      background: rgba(0, 0, 0, 0.82);
+      backdrop-filter: blur(18px);
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 82px;
+      gap: 20px;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+      font-weight: 800;
+      letter-spacing: 0.03em;
+    }
+
+    .brand img {
+      width: 54px;
+      height: 54px;
+      object-fit: contain;
+      filter: drop-shadow(0 8px 14px rgba(212, 175, 55, 0.18));
+    }
+
+    .brand span {
+      overflow-wrap: anywhere;
+      color: var(--gold);
+      font-size: 1.03rem;
+      text-transform: uppercase;
+    }
+
+    .menu-toggle {
+      display: none;
+      width: 44px;
+      height: 44px;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--line);
+      border-radius: 50%;
+      background: transparent;
+      color: var(--gold);
+      cursor: pointer;
+    }
+
+    .menu-toggle span,
+    .menu-toggle span::before,
+    .menu-toggle span::after {
+      display: block;
+      width: 19px;
+      height: 2px;
+      border-radius: 99px;
+      background: currentColor;
+      content: "";
+      transition: transform 180ms ease, opacity 180ms ease;
+    }
+
+    .menu-toggle span::before { transform: translateY(-6px); }
+    .menu-toggle span::after { transform: translateY(4px); }
+    .menu-toggle.is-open span { transform: rotate(45deg); }
+    .menu-toggle.is-open span::before { opacity: 0; }
+    .menu-toggle.is-open span::after { transform: translateY(-2px) rotate(-90deg); }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      list-style: none;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .nav-links a {
+      display: inline-flex;
+      align-items: center;
+      min-height: 42px;
+      padding: 0 13px;
+      border-radius: 999px;
+      color: rgba(255, 255, 255, 0.78);
+      font-size: 0.9rem;
+      font-weight: 800;
+      transition: background 160ms ease, color 160ms ease;
+    }
+
+    .nav-links a:hover,
+    .nav-links a.is-active {
+      background: rgba(212, 175, 55, 0.12);
+      color: var(--gold);
+    }
+
+    .hero {
+      position: relative;
+      display: grid;
+      align-items: end;
+      min-height: 96vh;
+      overflow: hidden;
+      border-bottom: 1px solid var(--line);
+      isolation: isolate;
+      background: #000000;
+    }
+
+    .hero-video {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+    }
+
+    .hero::before {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      background:
+        linear-gradient(90deg, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.24) 56%, rgba(0, 0, 0, 0.06)),
+        linear-gradient(0deg, rgba(0, 0, 0, 0.48), transparent 46%);
+      content: "";
+      pointer-events: none;
+    }
+
+    .hero::after {
+      position: absolute;
+      inset: auto 0 0;
+      z-index: 1;
+      height: 28%;
+      background: linear-gradient(0deg, #000000, transparent);
+      content: "";
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      width: min(100% - 32px, var(--max));
+      margin-inline: auto;
+      padding: 156px 0 88px;
+    }
+
+    .hero-logo {
+      width: clamp(150px, 18vw, 250px);
+      height: auto;
+      margin-bottom: 26px;
+      filter: drop-shadow(0 20px 42px rgba(0, 0, 0, 0.58));
+    }
+
+    .hero h1 {
+      max-width: 900px;
+      color: var(--gold);
+      font-size: clamp(4rem, 7.4vw, 8rem);
+      line-height: 0.92;
+      text-transform: uppercase;
+      text-shadow: 0 18px 40px rgba(0, 0, 0, 0.64);
+    }
+
+    .slogan {
+      display: inline-flex;
+      margin-top: 24px;
+      border-top: 1px solid var(--line);
+      padding-top: 22px;
+      color: var(--white);
+      font-size: clamp(1.35rem, 2vw, 1.8rem);
+      font-style: italic;
+    }
+
+    section { padding: 92px 0; }
+    section:nth-of-type(odd):not(.hero) { background: rgba(255, 255, 255, 0.025); }
+
+    .section-head {
+      display: grid;
+      gap: 10px;
+      max-width: 820px;
+      margin-bottom: 38px;
+    }
+
+    .section-kicker {
+      color: var(--gold-2);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    .section-title {
+      color: var(--gold);
+      font-size: clamp(2.05rem, 5vw, 4rem);
+      line-height: 1;
+    }
+
+    .lux-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+      gap: 28px;
+      align-items: stretch;
+    }
+
+    .panel,
+    .value-card,
+    .product-card,
+    .point-card,
+    .research-card,
+    .credit-card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: linear-gradient(145deg, rgba(27, 23, 16, 0.98), rgba(8, 7, 5, 0.98));
+      box-shadow: var(--shadow);
+    }
+
+    .panel { display: grid; gap: 18px; padding: 28px; }
+    .panel h3,
+    .value-card h3,
+    .product-card h3,
+    .point-card h3,
+    .research-card h3,
+    .credit-card h3 {
+      color: var(--gold);
+      font-size: 1.22rem;
+      line-height: 1.2;
+    }
+
+    .panel p,
+    .value-card p,
+    .product-card p,
+    .point-card p,
+    .research-card p,
+    .credit-card p,
+    li {
+      color: var(--text);
+    }
+
+    .logo-panel {
+      display: grid;
+      place-items: center;
+      padding: 34px;
+      min-height: 100%;
+    }
+
+    .logo-panel img {
+      width: min(100%, 420px);
+      filter: drop-shadow(0 24px 58px rgba(212, 175, 55, 0.14));
+    }
+
+    .values-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 28px;
+    }
+
+    .value-card {
+      display: grid;
+      gap: 12px;
+      padding: 22px;
+      min-height: 230px;
+    }
+
+    .product-grid,
+    .points-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .product-grid + .product-grid { margin-top: 18px; }
+
+    .product-card {
+      overflow: hidden;
+      display: grid;
+      grid-template-rows: auto 1fr;
+    }
+
+    .product-card figure {
+      min-height: 360px;
+      background: #050505;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .product-card img {
+      width: 100%;
+      height: 100%;
+      max-height: 460px;
+      object-fit: cover;
+    }
+
+    .product-card .contain {
+      object-fit: contain;
+      padding: 24px;
+      background: radial-gradient(circle at center, rgba(212, 175, 55, 0.1), transparent 62%), #050505;
+    }
+
+    .product-body {
+      display: grid;
+      gap: 14px;
+      padding: 26px;
+    }
+
+    .facts {
+      display: grid;
+      gap: 8px;
+      list-style: none;
+      color: var(--muted);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 0.94rem;
+    }
+
+    .facts strong { color: var(--gold-2); }
+
+    .point-card {
+      display: grid;
+      gap: 12px;
+      padding: 26px;
+    }
+
+    .research-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr);
+      gap: 22px;
+      align-items: start;
+    }
+
+    .research-stack { display: grid; gap: 14px; }
+
+    .research-card {
+      display: grid;
+      gap: 10px;
+      padding: 22px;
+    }
+
+    .accordion {
+      display: grid;
+      gap: 10px;
+    }
+
+    .accordion button {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      min-height: 58px;
+      padding: 0 18px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(212, 175, 55, 0.1);
+      color: var(--gold);
+      cursor: pointer;
+      text-align: left;
+      font-weight: 800;
+    }
+
+    .accordion button span {
+      flex: 0 0 auto;
+      width: 26px;
+      height: 26px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--line);
+      border-radius: 50%;
+    }
+
+    .accordion-panel {
+      display: none;
+      padding: 18px 20px 22px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.035);
+    }
+
+    .accordion-panel.is-open { display: block; }
+
+    .chart-card {
+      display: grid;
+      gap: 18px;
+      margin-top: 14px;
+      padding: 22px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: linear-gradient(145deg, rgba(27, 23, 16, 0.98), rgba(8, 7, 5, 0.98));
+      box-shadow: var(--shadow);
+    }
+
+    .chart-card h3 {
+      color: var(--gold);
+      font-size: 1.22rem;
+      line-height: 1.2;
+    }
+
+    .chart-row {
+      display: grid;
+      grid-template-columns: 64px minmax(0, 1fr);
+      gap: 14px;
+      align-items: center;
+    }
+
+    .chart-percent {
+      color: var(--gold);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 1.4rem;
+      font-weight: 950;
+      line-height: 1;
+      text-align: right;
+    }
+
+    .chart-label {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 7px;
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 0.9rem;
+      font-weight: 800;
+    }
+
+    .chart-label span:last-child {
+      color: var(--muted);
+      font-size: 0.8rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .chart-track {
+      overflow: hidden;
+      height: 11px;
+      border: 1px solid rgba(212, 175, 55, 0.18);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .chart-fill {
+      width: var(--value);
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--gold), var(--gold-2));
+      box-shadow: 0 0 18px rgba(212, 175, 55, 0.36);
+    }
+
+    .gallery {
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+      box-shadow: var(--shadow);
+    }
+
+    .gallery-frame {
+      position: relative;
+      aspect-ratio: 16 / 10;
+      background: #050505;
+    }
+
+    .gallery-frame img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0;
+      transition: opacity 220ms ease;
+    }
+
+    .gallery-frame img.is-active { opacity: 1; }
+
+    .gallery-controls {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 16px;
+      border-top: 1px solid var(--line);
+    }
+
+    .gallery-controls button {
+      width: 42px;
+      height: 42px;
+      border: 1px solid var(--line);
+      border-radius: 50%;
+      background: transparent;
+      color: var(--gold);
+      cursor: pointer;
+      font-size: 1.25rem;
+    }
+
+    .gallery-title {
+      min-width: 0;
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 0.94rem;
+      font-weight: 800;
+      text-align: center;
+    }
+
+    .footer {
+      border-top: 1px solid var(--line);
+      padding: 54px 0 34px;
+      background: #000000;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(240px, 0.6fr);
+      gap: 24px;
+      align-items: stretch;
+    }
+
+    .credit-card {
+      display: grid;
+      gap: 8px;
+      padding: 26px;
+    }
+
+    .credit-card p { color: var(--muted); }
+    .credit-card strong { color: var(--gold); }
+
+    .footer-logos {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .brand-seal,
+    .bless-seal {
+      display: grid;
+      min-height: 190px;
+      place-items: center;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: linear-gradient(145deg, rgba(27, 23, 16, 0.92), rgba(0, 0, 0, 0.92));
+    }
+
+    .brand-seal img { width: min(150px, 76%); }
+
+    .bless-seal {
+      color: var(--white);
+      font-size: 1.85rem;
+      font-weight: 900;
+      letter-spacing: 0.04em;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    .copyright {
+      margin-top: 26px;
+      color: var(--muted);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 0.86rem;
+      text-align: center;
+    }
+
+    @media (max-width: 1000px) {
+      .values-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .lux-grid,
+      .research-layout,
+      .footer-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 820px) {
+      .menu-toggle { display: inline-flex; }
+      .nav-links {
+        position: absolute;
+        inset: 82px 16px auto;
+        display: grid;
+        gap: 6px;
+        padding: 12px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: rgba(0, 0, 0, 0.98);
+        box-shadow: var(--shadow);
+        opacity: 0;
+        pointer-events: none;
+        transform: translateY(-10px);
+        transition: opacity 180ms ease, transform 180ms ease;
+      }
+
+      .nav-links.is-open {
+        opacity: 1;
+        pointer-events: auto;
+        transform: translateY(0);
+      }
+
+      .nav-links a { justify-content: center; width: 100%; }
+      .product-grid,
+      .points-grid,
+      .footer-logos { grid-template-columns: 1fr; }
+      section { padding: 72px 0; }
+      .product-card figure { min-height: 300px; }
+    }
+
+    @media (max-width: 560px) {
+      .container { width: min(100% - 24px, var(--max)); }
+      .brand img { width: 46px; height: 46px; }
+      .brand span { font-size: 0.9rem; }
+      .hero { min-height: 88vh; }
+      .hero-content {
+        width: min(100% - 24px, var(--max));
+        padding: 120px 0 56px;
+      }
+      .hero-logo { width: 140px; }
+      .hero h1 { font-size: clamp(3.1rem, 16vw, 4.8rem); }
+      .values-grid { grid-template-columns: 1fr; }
+      .chart-row {
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+      .chart-percent { text-align: left; }
+      .chart-label {
+        display: grid;
+        gap: 2px;
+      }
+      .panel,
+      .value-card,
+      .product-body,
+      .point-card,
+      .research-card,
+      .credit-card { padding: 22px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <nav class="nav container" aria-label="Menú de navegación">
+      <a class="brand" href="#inicio" aria-label="Inicio">
+        <img src="assets/brand/valle-de-miel-logo.png" alt="Logo Café Valle de Miel">
+        <span>Café Valle de Miel</span>
+      </a>
+      <button class="menu-toggle" type="button" aria-label="Abrir menú" aria-expanded="false" aria-controls="nav-links" onclick="toggleMenu()">
+        <span aria-hidden="true"></span>
+      </button>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="#inicio">Inicio</a></li>
+        <li><a href="#nosotros">Nosotros</a></li>
+        <li><a href="#productos">Productos</a></li>
+        <li><a href="#investigacion">Investigación de Mercado</a></li>
+        <li><a href="#puntos">Puntos de Venta</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero" id="inicio">
+      <video class="hero-video" autoplay muted loop playsinline preload="metadata" poster="assets/media/hero-valle-miel-frame.jpg" aria-label="Video principal de Café Valle de Miel">
+        <source src="assets/media/hero-valle-miel.mp4" type="video/mp4">
+      </video>
+      <div class="hero-content">
+        <img class="hero-logo" src="assets/brand/valle-de-miel-logo.png" alt="Logo Café Valle de Miel">
+        <h1>Café Valle de Miel</h1>
+        <p class="slogan">“La Grandeza está en tu esencia”</p>
+      </div>
+    </section>
+
+    <section id="nosotros">
+      <div class="container">
+        <div class="section-head">
+          <span class="section-kicker">Sección 1</span>
+          <h2 class="section-title">Información General / Nosotros</h2>
+        </div>
+        <div class="lux-grid">
+          <div class="panel">
+            <h3>Nombre de la Empresa</h3>
+            <p>Café Valle de Miel.</p>
+            <h3>Misión (Empresarial)</h3>
+            <p>“Somos la esencia que transforma cada grano de café en elegancia y orgullo guatemalteco, distinguiéndonos por tostar y servir café de la más alta calidad, uniendo a las personas en experiencias que inspiran y nutren el espíritu humano.”</p>
+            <h3>Visión (Empresarial)</h3>
+            <p>“Ser reconocidos como la marca que distribuye el mejor café del mundo, ofreciendo calidad, tradición y una experiencia única que conecte a las personas con la riqueza de nuestras tierras y el esfuerzo de quienes lo producen.”</p>
+          </div>
+          <div class="panel logo-panel">
+            <img src="assets/brand/valle-de-miel-logo.png" alt="Logo Café Valle de Miel">
+          </div>
+        </div>
+
+        <div class="values-grid">
+          <article class="value-card">
+            <h3>Artesanía</h3>
+            <p>Trabajo cuidadoso que convierte el café en una obra de calidad desde la cosecha hasta el tostado.</p>
+          </article>
+          <article class="value-card">
+            <h3>Coraje</h3>
+            <p>Defender lo que somos y competir en un mercado exigente llevando el café guatemalteco al prestigio.</p>
+          </article>
+          <article class="value-card">
+            <h3>Perseverancia</h3>
+            <p>Esfuerzo continuo para mantener la más alta calidad y ser reconocidos internacionalmente.</p>
+          </article>
+          <article class="value-card">
+            <h3>Honestidad</h3>
+            <p>Generar confianza entregando lo prometido en cada taza.</p>
+          </article>
+          <article class="value-card">
+            <h3>Respeto</h3>
+            <p>Presente en el trato con clientes, colaboradores, comunidades y la tradición cafetalera.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="productos">
+      <div class="container">
+        <div class="section-head">
+          <span class="section-kicker">Sección 2</span>
+          <h2 class="section-title">Descripción de Productos y Empaques</h2>
+        </div>
+        <div class="product-grid">
+          <article class="product-card">
+            <figure>
+              <img class="contain" src="assets/segunda/empaque-cafe.png" alt="Bolsa de empaque negro mate con franja dorada">
+            </figure>
+            <div class="product-body">
+              <h3>Producto Principal: CAFÉ</h3>
+              <p>Cultivado a 1,400 msnm en tierras volcánicas. Crece lentamente en montañas concentrando un aroma intenso y un sabor balanceado con notas dulces y acidez perfecta.</p>
+              <ul class="facts">
+                <li><strong>Presentación:</strong> Bolsa de 1 libra (453g) de café molido.</li>
+                <li><strong>Precio:</strong> Q80.00 por libra.</li>
+                <li><strong>Empaque:</strong> Bolsa Trilaminada negro mate con logo en dorado. Protege de la luz, el oxígeno y la humedad.</li>
+              </ul>
+            </div>
+          </article>
+          <article class="product-card">
+            <figure>
+              <img src="assets/segunda/prueba-pastelito.png" alt="Mini pastelitos decorados">
+            </figure>
+            <div class="product-body">
+              <h3>Producto Secundario: MINI PASTELITOS</h3>
+              <p>Repostería artesanal pensada para acompañar el café. Sabores como café, chocolate, vainilla, canela, etc., y opción de sabores frutales como fresa. Porción individual.</p>
+              <ul class="facts">
+                <li><strong>Precio:</strong> Q8.00 unitario (disponible en combo con café).</li>
+                <li><strong>Empaque:</strong> Cajitas biodegradables de fibra de caña de azúcar, resistentes y con detalles hechos a mano.</li>
+              </ul>
+            </div>
+          </article>
+        </div>
+        <div class="product-grid">
+          <article class="product-card">
+            <figure>
+              <img class="contain" src="assets/segunda/empaque-pastelitos.png" alt="Empaques ecológicos individuales">
+            </figure>
+            <div class="product-body">
+              <h3>Empaque del producto secundario</h3>
+              <p>Cajitas biodegradables de fibra de caña de azúcar, resistentes y con detalles hechos a mano.</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="puntos">
+      <div class="container">
+        <div class="section-head">
+          <span class="section-kicker">Sección 3</span>
+          <h2 class="section-title">Ubicación y Puntos de Venta</h2>
+        </div>
+        <div class="points-grid">
+          <article class="point-card">
+            <h3>Ubicación de Origen</h3>
+            <p>San Pedro Yepocapa, Chimaltenango.</p>
+          </article>
+          <article class="point-card">
+            <h3>Punto de Venta Matriz</h3>
+            <p>San Pedro Yepocapa (Lugar de producción y procesamiento con alta tradición cafetalera).</p>
+          </article>
+          <article class="point-card">
+            <h3>Segundo Punto de Venta</h3>
+            <p>Centro Comercial Miraflores (Alta visibilidad y gran afluencia para posicionamiento como producto premium).</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="investigacion">
+      <div class="container">
+        <div class="section-head">
+          <span class="section-kicker">Sección 4</span>
+          <h2 class="section-title">Investigación de Mercado y Prueba Piloto</h2>
+        </div>
+        <div class="research-layout">
+          <div class="research-stack">
+            <article class="research-card">
+              <h3>Mercado Meta</h3>
+              <p>Amantes del café sin importar edad ni sexo.</p>
+            </article>
+            <div class="accordion" id="research-accordion">
+              <button type="button" aria-expanded="true" aria-controls="panel-1">Resultados Clave de Investigación <span>+</span></button>
+              <div class="accordion-panel is-open" id="panel-1">
+                <ul class="facts">
+                  <li>El 100% de los encuestados consume café y el 95% lo hace a diario.</li>
+                  <li>El 95% prefiere café molido y el 70% compra empaques de 1 libra (453g).</li>
+                  <li>El 80% considera el <strong>Sabor</strong> como el factor principal de compra y el 60% está dispuesto a pagar Q80 por libra.</li>
+                  <li>El 80% prefiere acompañar su café con repostería y comprarlo en combo.</li>
+                </ul>
+              </div>
+              <article class="chart-card" aria-label="Gráficos de resultados clave de investigación">
+                <h3>Resultados Clave de Investigación</h3>
+                <div class="chart-row" style="--value: 100%;">
+                  <strong class="chart-percent">100%</strong>
+                  <div>
+                    <div class="chart-label"><span>Consume café</span><span>100%</span></div>
+                    <div class="chart-track"><div class="chart-fill"></div></div>
+                  </div>
+                </div>
+                <div class="chart-row" style="--value: 95%;">
+                  <strong class="chart-percent">95%</strong>
+                  <div>
+                    <div class="chart-label"><span>Lo hace a diario</span><span>95%</span></div>
+                    <div class="chart-track"><div class="chart-fill"></div></div>
+                  </div>
+                </div>
+                <div class="chart-row" style="--value: 95%;">
+                  <strong class="chart-percent">95%</strong>
+                  <div>
+                    <div class="chart-label"><span>Prefiere café molido</span><span>95%</span></div>
+                    <div class="chart-track"><div class="chart-fill"></div></div>
+                  </div>
+                </div>
+                <div class="chart-row" style="--value: 70%;">
+                  <strong class="chart-percent">70%</strong>
+                  <div>
+                    <div class="chart-label"><span>Compra empaques de 1 libra (453g)</span><span>70%</span></div>
+                    <div class="chart-track"><div class="chart-fill"></div></div>
+                  </div>
+                </div>
+                <div class="chart-row" style="--value: 80%;">
+                  <strong class="chart-percent">80%</strong>
+                  <div>
+                    <div class="chart-label"><span>Considera el Sabor como factor principal</span><span>80%</span></div>
+                    <div class="chart-track"><div class="chart-fill"></div></div>
+                  </div>
+                </div>
+                <div class="chart-row" style="--value: 60%;">
+                  <strong class="chart-percent">60%</strong>
+                  <div>
+                    <div class="chart-label"><span>Está dispuesto a pagar Q80 por libra</span><span>60%</span></div>
+                    <div class="chart-track"><div class="chart-fill"></div></div>
+                  </div>
+                </div>
+                <div class="chart-row" style="--value: 80%;">
+                  <strong class="chart-percent">80%</strong>
+                  <div>
+                    <div class="chart-label"><span>Prefiere café con repostería en combo</span><span>80%</span></div>
+                    <div class="chart-track"><div class="chart-fill"></div></div>
+                  </div>
+                </div>
+              </article>
+              <button type="button" aria-expanded="false" aria-controls="panel-2">Pruebas Piloto Realizadas <span>+</span></button>
+              <div class="accordion-panel" id="panel-2">
+                <p>Galería con fotografías de las encuestas en campo y pruebas del café y pastelitos.</p>
+              </div>
+            </div>
+          </div>
+          <div class="gallery" aria-label="Galería de investigación de mercado y prueba piloto">
+            <div class="gallery-frame">
+              <img class="is-active" src="assets/segunda/encuesta-cafe-campo.png" alt="Encuesta en campo de café" data-title="Encuesta en campo de café">
+              <img src="assets/segunda/encuesta-pastelitos-campo.png" alt="Encuesta en campo de pastelitos" data-title="Encuesta en campo de pastelitos">
+              <img src="assets/segunda/prueba-pastelito.png" alt="Prueba piloto pastelitos" data-title="Prueba piloto pastelitos">
+            </div>
+            <div class="gallery-controls">
+              <button type="button" class="gallery-prev" aria-label="Imagen anterior">‹</button>
+              <p class="gallery-title">Encuesta en campo de café</p>
+              <button type="button" class="gallery-next" aria-label="Imagen siguiente">›</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-grid">
+      <div class="credit-card">
+        <h3>Créditos del Proyecto</h3>
+        <p><strong>Estudiante:</strong> Umul Nimajuan Pedro Fernando</p>
+        <p><strong>Grado:</strong> 6to Perito en Administración de Empresas</p>
+        <p><strong>Asignatura:</strong> Proyecto de Emprendimiento (Primera y Segunda Etapa)</p>
+        <p><strong>Catedrático:</strong> Lic. Alvin Amílcar Castillo</p>
+        <p><strong>Institución:</strong> Colegio BLESS (Año 2026)</p>
+      </div>
+      <div class="footer-logos" aria-label="Logos adicionales">
+        <div class="bless-seal">BLESS<br>2026</div>
+        <div class="brand-seal"><img src="assets/brand/valle-de-miel-logo.png" alt="Logo Café Valle de Miel"></div>
+      </div>
+    </div>
+    <p class="copyright">Café Valle de Miel</p>
+  </footer>
+
+  <script src="assets/app.js"></script>
+</body>
+</html>
